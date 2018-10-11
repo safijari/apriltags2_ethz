@@ -1,7 +1,11 @@
-from apriltags_eth import test
+from apriltags_eth import AprilTagDetector, test, make_default_detector
 
 import cv2
 
-im = cv2.resize(cv2.imread('/mnt/hgfs/calibration/test.jpg', 0), (640, 480))
+det = make_default_detector()
 
-test(im)
+im = cv2.resize(cv2.imread('/home/jari/Work/Calibration/test.jpg', 0), (640, 480))
+
+for tag in det.extract_tags(im):
+    print tag.id
+    print tag.corners

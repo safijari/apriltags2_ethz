@@ -36,6 +36,44 @@ void detectorTest(pybind11::array_t<uint8_t, pybind11::array::c_style | pybind11
 
 PYBIND11_MODULE(apriltags_eth, m) {
   m.def("test", &detectorTest);
+  pybind11::class_<AprilTags::TagDetector>(m, "AprilTagDetector")
+    .def(pybind11::init<AprilTags::TagCodes, size_t>())
+    .def("extract_tags", [](const AprilTags::TagDetector& a,
+                            pybind11::array_t<uint8_t,
+                            pybind11::array::c_style | pybind11::array::forcecast> image)
+         {
+           cv::Mat cv_image = cv::Mat::zeros(image.shape()[0], image.shape()[1], CV_8U);
+
+           for (size_t i = 0; i < cv_image.rows; ++i) {
+             for (size_t j = 0; j < cv_image.cols; ++j) {
+               cv_image.at<uchar>(i, j) = *image.data(i, j);
+             }
+           }
+
+           return a.extractTags(cv_image);
+         });
+
+  m.def("make_default_detector", [](){
+      AprilTags::TagCodes m_tagCodes = AprilTags::tagCodes36h11;
+      return AprilTags::TagDetector(m_tagCodes, 2);
+    });
+
+  pybind11::class_<AprilTags::TagDetection>(m, "AprilTagDetection")
+    .def_readwrite("id", &AprilTags::TagDetection::id)
+    .def_readwrite("good", &AprilTags::TagDetection::good)
+    .def_readwrite("code", &AprilTags::TagDetection::code)
+    .def_readwrite("obs_code", &AprilTags::TagDetection::obsCode)
+    .def_readwrite("hamming_distance", &AprilTags::TagDetection::hammingDistance)
+    .def_readwrite("rotation", &AprilTags::TagDetection::rotation)
+    .def_property_readonly("corners", [](const AprilTags::TagDetection& a){
+        std::vector<std::pair<float, float> > out;
+        for (int i = 0; i < 4; i++) {
+          out.push_back(a.p[i]);
+        }
+        return out;
+      })
+    .def_readwrite("cxy", &AprilTags::TagDetection::cxy)
+    .def_readwrite("observed_perimeter", &AprilTags::TagDetection::observedPerimeter);
 
 #ifdef VERSION_INFO
   m.attr("__version__") = VERSION_INFO;
