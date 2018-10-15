@@ -3,6 +3,7 @@ image: ubuntu
 build_script:
   - sudo pip install cibuildwheel==0.10.0
   - set CIBW_MANYLINUX1_X86_64_IMAGE=safijari/manylinux-x64 
+  - set CIBW_PLATFORM=linux
   - set CIBW_BEFORE_BUILD="export CMAKE_PREFIX_PATH=/work/opencv-3.4.3/build/install/"
   - cibuildwheel --output-dir wheelhouse
 artifacts:
