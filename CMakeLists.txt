@@ -5,12 +5,9 @@ project(ethz_apriltag2)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/)
 
-find_package(Eigen3 REQUIRED)
+# find_package(Eigen3 REQUIRED) # TODO: figure out eigen in container
 find_package(OpenCV REQUIRED)
-# find_package(PythonLibs REQUIRED)
-# MESSAGE( " *** PYTHON_INCLUDE_DIRS : " ${PYTHON_INCLUDE_DIRS} )
-# MESSAGE( " *** PYTHON_LIBRARIES : " ${PYTHON_LIBRARIES} )
-
+# TODO: in container the above requires CMAKE_PREFIX_PATH=/work/opencv-3.4.3/build/install/
 
 add_definitions(-fPIC -O3)
 include_directories(include /usr/include/eigen3)
@@ -21,15 +18,6 @@ add_library(${PROJECT_NAME}  ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 
-#add_python_export_library(aslam_cameras_april_python python/aslam_cameras_april
-#  src/module.cpp)
 add_subdirectory(pybind11)
 pybind11_add_module(apriltags_eth src/module.cpp)
-# target_link_libraries(example ${PYTHON_LIBRARIES} ${PROJECT_NAME})
 target_link_libraries(apriltags_eth ${PROJECT_NAME})
-
-#demo
-if(NOT APPLE)
-  add_executable(apriltags_demo src/example/apriltags_demo.cpp src/example/Serial.cpp)
-  target_link_libraries(apriltags_demo ${PROJECT_NAME} v4l2)
-endif()

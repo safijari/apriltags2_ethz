@@ -1,0 +1,6 @@
+build_script:
+  - pip install cibuildwheel==0.10.0
+  - CIBW_MANYLINUX1_X86_64_IMAGE=safijari/manylinux-x64 CMAKE_PREFIX_PATH=/work/opencv-3.4.3/build/install/ cibuildwheel --output-dir wheelhouse
+artifacts:
+  - path: "wheelhouse\\*.whl"
+    name: Wheels
