@@ -1,5 +1,8 @@
 image: ubuntu
 
+install:
+  - cmd: git submodule -q update --init
+
 build_script:
   - sudo pip install cibuildwheel==0.10.0
   # - set CIBW_MANYLINUX1_X86_64_IMAGE=safijari/manylinux-x64 
