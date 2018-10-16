@@ -7,7 +7,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/)
 
 # find_package(Eigen3 REQUIRED) # TODO: figure out eigen in container
 find_package(OpenCV REQUIRED)
-# TODO: in container the above requires CMAKE_PREFIX_PATH=/work/opencv-3.4.3/build/install/
 
 add_definitions(-fPIC -O3)
 include_directories(include /usr/include/eigen3)
