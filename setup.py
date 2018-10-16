@@ -56,23 +56,6 @@ class CMakeBuild(build_ext):
         subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
         subprocess.check_call(['cmake', '--build', '.'] + build_args, cwd=self.build_temp)
 
-# from glob import glob
-
-# ext_modules = [
-#     Extension(
-#         'apriltags_eth',
-#         glob('src/*.cc') + ['src/module.cpp'],
-#         include_dirs=[
-#             'include',
-#             '/usr/include/eigen3/',
-#             get_pybind_include(),
-#             get_pybind_include(user=True)
-#         ],
-#         libraries=['opencv_aruco3', 'opencv_core', 'opencv_highgui3'],
-#         library_dirs=["/opt/ros/kinetic/lib/x86_64-linux-gnu/"],
-#         language='c++'
-#     ),
-# ]
 
 setup(
     name='pyapriltags-eth',
@@ -80,7 +63,11 @@ setup(
     author='Jariullah Safi',
     author_email='safijari@isu.edu',
     ext_modules=[CMakeExtension('cmake_example')],
-    install_requires=['pybind11>=2.2'],
+    install_requires=['pybind11>=2.2',
+                      'numpy',
+                      'opencv-python',
+                      'pyx'],
+    packages=['aprilgrid'],
     cmdclass=dict(build_ext=CMakeBuild),
     zip_safe=False,
 )
