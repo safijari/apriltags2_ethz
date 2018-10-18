@@ -69,7 +69,7 @@ if tag_name_var in os.environ and os.environ[tag_name_var]:
     version = os.environ[tag_name_var]
 
 setup(
-    name='pyapriltags-eth',
+    name='apriltags2-ethz',
     version=version,
     author='Jariullah Safi',
     author_email='safijari@isu.edu',
