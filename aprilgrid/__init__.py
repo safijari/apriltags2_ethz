@@ -1,18 +1,3 @@
- #\brief Construct an Aprilgrid calibration target
-        #tagRows:    number of tags in y-dir (gridRows = 2*tagRows)
-        #tagCols:    number of tags in x-dir (gridCols = 2*tagCols)
-        #tagSize:    size of a tag [m]
-        #tagSpacing: space between tags (in tagSpacing [m] = tagSpacing*tagSize)
-#
-        #corner ordering in _points :
-          #12-----13  14-----15
-          #| TAG 3 |  | TAG 4 |
-          #8-------9  10-----11
-          #4-------5  6-------7
-    #y     | TAG 1 |  | TAG 2 |
-   #^      0-------1  2-------3
-   #|-->x
-
 from tagFamilies import t36h11
 from apriltags_eth import make_default_detector
 from collections import namedtuple
