@@ -15,12 +15,13 @@ build_script:
   - git submodule -q update --init
   - sudo pip install cibuildwheel==0.10.0
   - cibuildwheel --output-dir wheelhouse
+  - sh: rm -rf wheelhouse/*
+    on:
+      appevyor_repo_tag: true
 
 artifacts:
   - path: "wheelhouse\\*.whl"
     name: Wheels
-    on:
-      appevyor_repo_tag: true
 
 deploy_script:
     - sh: pip install -U twine && twine upload -u $TWINE_USER -p $TWINE_PASS wheelhouse/*
