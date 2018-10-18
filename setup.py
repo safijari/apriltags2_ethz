@@ -56,10 +56,17 @@ class CMakeBuild(build_ext):
         subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
         subprocess.check_call(['cmake', '--build', '.'] + build_args, cwd=self.build_temp)
 
+version = 'dev'
+
+if 'APPVEYOR_REPO_COMMIT' in os.environ:
+    version = 'APPVEYOR_REPO_COMMIT'
+
+if 'APPVEYOR_REPO_TAG' and 'APPVEYOR_REPO_TAG_NAME' in os.environ:
+    version = os.environ['APPVEYOR_REPO_TAG_NAME']
 
 setup(
     name='pyapriltags-eth',
-    version='0.0.1',
+    version=version,
     author='Jariullah Safi',
     author_email='safijari@isu.edu',
     ext_modules=[CMakeExtension('cmake_example')],
