@@ -2,7 +2,6 @@ image: ubuntu
 
 build_script:
   - git submodule -q update --init
-  - sh: find .
   - sudo pip install cibuildwheel==0.10.0
   - sh: CIBW_SKIP="*-manylinux1_i686" CIBW_ENVIRONMENT_LINUX="CMAKE_PREFIX_PATH=/work/opencv-3.4.3/build/install/" CIBW_PLATFORM=linux CIBW_MANYLINUX1_X86_64_IMAGE=safijari/manylinux-x64 cibuildwheel --output-dir wheelhouse
 
