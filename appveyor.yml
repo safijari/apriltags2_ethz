@@ -1,10 +1,29 @@
 image: ubuntu
 
+environment:
+  TWINE_PASS:
+    secure: l5f9zb54AYJ/kZgpYI2NGtktBACOM6jA1oQkrzz6wuI=
+  CIBW_SKIP: "*-manylinux1_i686"
+  CIBW_ENVIRONMENT_LINUX: >
+    "CMAKE_PREFIX_PATH=/work/opencv-3.4.3/build/install/
+    APPVEYOR_REPO_COMMIT=$APPVEYOR_REPO_COMMIT
+    APPVEYOR_REPO_TAG_NAME=$APPVEYOR_REPO_TAG_NAME"
+  CIBW_PLATFORM: linux 
+  CIBW_MANYLINUX1_X86_64_IMAGE: safijari/manylinux-x64 
+
 build_script:
   - git submodule -q update --init
   - sudo pip install cibuildwheel==0.10.0
-  - sh: CIBW_SKIP="*-manylinux1_i686" CIBW_ENVIRONMENT_LINUX="CMAKE_PREFIX_PATH=/work/opencv-3.4.3/build/install/ APPVEYOR_REPO_COMMIT=$APPVEYOR_REPO_COMMIT APPVEYOR_REPO_TAG_NAME=$APPVEYOR_REPO_TAG_NAME" CIBW_PLATFORM=linux CIBW_MANYLINUX1_X86_64_IMAGE=safijari/manylinux-x64 cibuildwheel --output-dir wheelhouse
+  - cibuildwheel --output-dir wheelhouse
 
 artifacts:
   - path: "wheelhouse\\*.whl"
     name: Wheels
+    on:
+      appevyor_repo_tag: true
+
+deploy_script:
+    - sh: pip install -U twine && twine upload -u $TWINE_USER -p $TWINE_PASS wheelhouse/*
+      on:
+        branch: master
+        appevyor_repo_tag: true
