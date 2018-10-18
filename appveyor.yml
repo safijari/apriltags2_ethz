@@ -1,10 +1,21 @@
 image: ubuntu
 
+environment:
+  TWINE_PASS:
+    secure: l5f9zb54AYJ/kZgpYI2NGtktBACOM6jA1oQkrzz6wuI=
+
 build_script:
   - git submodule -q update --init
   - sudo pip install cibuildwheel==0.10.0
-  - sh: CIBW_SKIP="*-manylinux1_i686" CIBW_ENVIRONMENT_LINUX="CMAKE_PREFIX_PATH=/work/opencv-3.4.3/build/install/" CIBW_PLATFORM=linux CIBW_MANYLINUX1_X86_64_IMAGE=safijari/manylinux-x64 cibuildwheel --output-dir wheelhouse
+  - CIBW_MANYLINUX1_X86_64_IMAGE=safijari/manylinux-x64 CIBW_PLATFORM=linux CIBW_SKIP="*-manylinux1_i686" CIBW_ENVIRONMENT_LINUX="CMAKE_PREFIX_PATH=/work/opencv-3.4.3/build/install/ APPVEYOR_REPO_COMMIT=$APPVEYOR_REPO_COMMIT APPVEYOR_REPO_TAG_NAME=$APPVEYOR_REPO_TAG_NAME" cibuildwheel --output-dir wheelhouse
+  - sh: |
+      [[ "$APPVEYOR_REPO_TAG" = "false" ]] && rm -rf wheelhouse/* || echo "Tagged build, not deleting artifacts"
 
 artifacts:
   - path: "wheelhouse\\*.whl"
     name: Wheels
+
+deploy_script:
+    - sh: sudo pip install -U twine
+    - sh: |
+        [[ "$APPVEYOR_REPO_TAG" = "true" && "$APPVEYOR_REPO_BRANCH" = "master" && -z "$APPVEYOR_PULL_REQUEST_NUMBER" ]] && twine upload -u $TWINE_USER -p $TWINE_PASS wheelhouse/* || echo "Nothing to deploy"

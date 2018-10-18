@@ -59,11 +59,14 @@ class CMakeBuild(build_ext):
 
 version = 'dev'
 
-if 'APPVEYOR_REPO_COMMIT' in os.environ:
-    version = 'APPVEYOR_REPO_COMMIT'
+commit_var = 'APPVEYOR_REPO_COMMIT'
+tag_name_var = 'APPVEYOR_REPO_TAG_NAME'
 
-if 'APPVEYOR_REPO_TAG' and 'APPVEYOR_REPO_TAG_NAME' in os.environ:
-    version = os.environ['APPVEYOR_REPO_TAG_NAME']
+if commit_var in os.environ and os.environ[commit_var]:
+    version = "0.0.0-" + os.environ[commit_var]
+
+if tag_name_var in os.environ and os.environ[tag_name_var]:
+    version = os.environ[tag_name_var]
 
 setup(
     name='pyapriltags-eth',
