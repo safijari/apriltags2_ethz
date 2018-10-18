@@ -3,21 +3,14 @@ image: ubuntu
 environment:
   TWINE_PASS:
     secure: l5f9zb54AYJ/kZgpYI2NGtktBACOM6jA1oQkrzz6wuI=
-  CIBW_SKIP: "*-manylinux1_i686"
-  CIBW_ENVIRONMENT_LINUX: >
-    "CMAKE_PREFIX_PATH=/work/opencv-3.4.3/build/install/
-    APPVEYOR_REPO_COMMIT=$APPVEYOR_REPO_COMMIT
-    APPVEYOR_REPO_TAG_NAME=$APPVEYOR_REPO_TAG_NAME"
-  CIBW_PLATFORM: linux 
-  CIBW_MANYLINUX1_X86_64_IMAGE: safijari/manylinux-x64 
 
 build_script:
   - git submodule -q update --init
   - sudo pip install cibuildwheel==0.10.0
-  - cibuildwheel --output-dir wheelhouse
+  - CIBW_MANYLINUX1_X86_64_IMAGE=safijari/manylinux-x64 CIBW_PLATFORM=linux CIBW_SKIP="*-manylinux1_i686" CIBW_ENVIRONMENT_LINUX="CMAKE_PREFIX_PATH=/work/opencv-3.4.3/build/install/ APPVEYOR_REPO_COMMIT=$APPVEYOR_REPO_COMMIT APPVEYOR_REPO_TAG_NAME=$APPVEYOR_REPO_TAG_NAME" cibuildwheel --output-dir wheelhouse
   - sh: rm -rf wheelhouse/*
     on:
-      appevyor_repo_tag: true
+      appevyor_repo_tag: false
 
 artifacts:
   - path: "wheelhouse\\*.whl"
