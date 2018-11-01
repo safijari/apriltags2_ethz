@@ -39,7 +39,7 @@ class AprilGrid(object):
         # Note: tag_id of lower left tag is 0, not 1
         a = self.size  # https://user-images.githubusercontent.com/5337083/41458381-be379c6e-7086-11e8-9291-352445140e88.png
         b = self.spacing * a
-        tag_row = (tag_id) // (self.rows - 1)
+        tag_row = (tag_id) // (self.columns - 1)
         tag_col = (tag_id) % self.columns
         left = bottom = lambda i: i*(a + b)
         right = top = lambda i: (i + 1) * a + (i) * b

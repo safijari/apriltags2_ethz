@@ -34,6 +34,7 @@ void detectorTest(pybind11::array_t<uint8_t, pybind11::array::c_style | pybind11
   delete detector;
 }
 
+
 PYBIND11_MODULE(apriltags_eth, m) {
   m.def("test", &detectorTest);
   pybind11::class_<AprilTags::TagDetector>(m, "AprilTagDetector")
