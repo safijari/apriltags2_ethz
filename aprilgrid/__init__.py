@@ -6,7 +6,7 @@ from collections import namedtuple
 
 DetectionResult = namedtuple('DetectionResult',
                              ['success', 'image_points',
-                              'target_points'])
+                              'target_points', 'ids'])
 
 
 class AprilGrid(object):
@@ -39,7 +39,7 @@ class AprilGrid(object):
         # Note: tag_id of lower left tag is 0, not 1
         a = self.size  # https://user-images.githubusercontent.com/5337083/41458381-be379c6e-7086-11e8-9291-352445140e88.png
         b = self.spacing * a
-        tag_row = (tag_id) // (self.columns - 1)
+        tag_row = (tag_id) // self.columns
         tag_col = (tag_id) % self.columns
         left = bottom = lambda i: i*(a + b)
         right = top = lambda i: (i + 1) * a + (i) * b
@@ -67,15 +67,16 @@ class AprilGrid(object):
 
         image_points = []
         target_points = []
+        ids = []
 
         filtered.sort(key=lambda x: x.id)
 
         # TODO: subpix refinement?
-
         for f in filtered:
             target_points.extend(self.get_tag_corners_for_id(f.id))
             image_points.extend(f.corners)
+            ids.extend([f.id, f.id, f.id, f.id])
 
         success = True if len(filtered) > 0 else False
 
-        return DetectionResult(success, image_points, target_points)
+        return DetectionResult(success, image_points, target_points, ids)
