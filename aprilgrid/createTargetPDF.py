@@ -10,16 +10,17 @@ import os
 import math
 import numpy as np
 
-from tagFamilies import *
+from .tagFamilies import *
 
-class AprilTagCodes:
+
+class AprilTagCodes(object):
     def __init__(self, chosenTagFamiliy):
         try:
             self.chosenTagFamiliy = chosenTagFamiliy
             self.tagCodes = TagFamilies[chosenTagFamiliy][0]
             self.totalBits = TagFamilies[chosenTagFamiliy][1]
         except:
-            print "[ERROR]: Unknown tag familiy."
+            print("[ERROR]: Unknown tag familiy.")
             sys.exit(0)
 
 #borderBits must be consitent with the variable "blackBorder" in the detector code in file ethz_apriltag2/src/TagFamily.cc
@@ -27,8 +28,8 @@ def generateAprilTag(canvas, position, metricSize, tagSpacing, tagID, tagFamilil
     #get the tag code
     try:
         tagCode=tagFamililyData.tagCodes[tagID]
-    except:
-        print "[ERROR]: Requested tag ID of {0} not available in the {1} TagFamiliy".format(tagID, tagFamililyData.chosenTagFamiliy)        
+    except Exception:
+        print("[ERROR]: Requested tag ID of {0} not available in the {1} TagFamiliy".format(tagID, tagFamililyData.chosenTagFamiliy))
 
     #calculate the bit size of the tag
     sqrtBits = (math.sqrt(tagFamililyData.totalBits))

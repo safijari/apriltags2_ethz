@@ -1,4 +1,4 @@
-from tagFamilies import t36h11
+from .tagFamilies import t36h11
 from apriltags_eth import make_default_detector
 from collections import namedtuple
 
