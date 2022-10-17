@@ -57,6 +57,16 @@ PYBIND11_MODULE(apriltags_eth, m) {
   m.def("make_default_detector", [](){
       AprilTags::TagCodes m_tagCodes = AprilTags::tagCodes36h11;
       return AprilTags::TagDetector(m_tagCodes, 2);
+    })
+  .def("getRelativeTransform", [](const AprilTags::TagDetection& tag, double tag_size, double fx, double fy, double px, double py){
+      Eigen::Matrix4d pose = tag.getRelativeTransform(tag_size,fx,fy,px,py);
+      std::vector<double> out;
+      for (int r = 0; r < 4; ++r){
+        for (int c = 0; c < 4; ++c){
+            out.push_back(pose(r,c));
+        }
+      }
+      return out;
     });
 
   pybind11::class_<AprilTags::TagDetection>(m, "AprilTagDetection")
