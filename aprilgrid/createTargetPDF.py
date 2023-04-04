@@ -81,7 +81,7 @@ def generateAprilTag(canvas, position, metricSize, tagSpacing, tagID, tagFamilil
 def generateAprilBoard(canvas, n_cols, n_rows, tagSize, tagSpacing=0.25, tagFamilily="t36h11"):
     
     if(tagSpacing<0 or tagSpacing>1.0):
-        print "[ERROR]: Invalid tagSpacing specified.  [0-1.0] of tagSize"
+        print("[ERROR]: Invalid tagSpacing specified.  [0-1.0] of tagSize")
         sys.exit(0)
         
     #convert to cm
@@ -126,7 +126,7 @@ def generateCheckerboard(canvas, n_cols, n_rows, size_cols, size_rows):
     size_rows = size_rows*100.0
     
     #message
-    print "Generating a checkerboard with {0}x{1} corners and a box size of {2}x{3} cm".format(n_cols,n_rows,size_cols,size_rows)
+    print("Generating a checkerboard with {0}x{1} corners and a box size of {2}x{3} cm".format(n_cols,n_rows,size_cols,size_rows))
     
     #draw boxes
     for x in range(0,n_cols+1):
@@ -178,7 +178,7 @@ if __name__ == "__main__":
     elif parsed.gridType == "checkerboard":
         generateCheckerboard(c, parsed.n_cols, parsed.n_rows, parsed.chessSzX, parsed.chessSzY)
     else:
-        print "[ERROR]: Unknown grid pattern"
+        print("[ERROR]: Unknown grid pattern")
         sys.exit(0)
             
     #write to file

@@ -10,7 +10,7 @@ DetectionResult = namedtuple('DetectionResult',
 
 
 class AprilGrid(object):
-    def __init__(self, rows, columns, size, spacing, family=t36h11):  # spacing is a fraction
+    def __init__(self, rows, columns, size, spacing, family=t36h11, shift=0):  # spacing is a fraction
         assert size != 0.0
         assert spacing != 0.0
         self.rows = rows
@@ -18,6 +18,7 @@ class AprilGrid(object):
         self.size = size
         self.spacing = spacing
         self.detector = make_default_detector()
+        self.shift = shift
 
     def is_detection_valid(self, detection, image):
         d = detection
@@ -29,7 +30,7 @@ class AprilGrid(object):
                 return False
         if not d.good:
             return False
-        if d.id >= self.rows * self.columns:  # original code divides this by 4????
+        if not (self.shift < d.id < self.rows * self.columns + shift):  # original code divides this by 4????
             return False
 
         return True
@@ -39,8 +40,8 @@ class AprilGrid(object):
         # Note: tag_id of lower left tag is 0, not 1
         a = self.size  # https://user-images.githubusercontent.com/5337083/41458381-be379c6e-7086-11e8-9291-352445140e88.png
         b = self.spacing * a
-        tag_row = (tag_id) // self.columns
-        tag_col = (tag_id) % self.columns
+        tag_row = (tag_id - self.shift) // self.columns
+        tag_col = (tag_id - self.shift) % self.columns
         left = bottom = lambda i: i*(a + b)
         right = top = lambda i: (i + 1) * a + (i) * b
         return [
