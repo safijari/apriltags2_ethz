@@ -57,23 +57,23 @@ class CMakeBuild(build_ext):
         subprocess.check_call(["cmake", "--build", "."] + build_args, cwd=self.build_temp)
 
 
-version = "dev"
+# version = "dev"
 
-commit_var = "APPVEYOR_REPO_COMMIT"
-tag_name_var = "APPVEYOR_REPO_TAG_NAME"
+# commit_var = "APPVEYOR_REPO_COMMIT"
+# tag_name_var = "APPVEYOR_REPO_TAG_NAME"
 
-if commit_var in os.environ and os.environ[commit_var]:
-    version = "0.0.0-" + os.environ[commit_var]
+# if commit_var in os.environ and os.environ[commit_var]:
+#     version = "0.0.0-" + os.environ[commit_var]
 
-if tag_name_var in os.environ and os.environ[tag_name_var]:
-    version = os.environ[tag_name_var]
+# if tag_name_var in os.environ and os.environ[tag_name_var]:
+#     version = os.environ[tag_name_var]
 
 setup(
     name="apriltags2-ethz",
-    version=version,
+    version="0.9.5",
     author="Jariullah Safi",
     author_email="safijari@isu.edu",
-    ext_modules=[CMakeExtension("cmake_example")],
+    ext_modules=[CMakeExtension("ethz_apriltag2")],
     install_requires=["pybind11>=2.2", "numpy", "opencv-python", "argh"],
     packages=["aprilgrid"],
     cmdclass=dict(build_ext=CMakeBuild),

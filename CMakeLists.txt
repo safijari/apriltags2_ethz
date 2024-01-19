@@ -19,4 +19,4 @@ target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 
 add_subdirectory(pybind11)
 pybind11_add_module(apriltags_eth src/module.cpp)
-target_link_libraries(apriltags_eth ${PROJECT_NAME})
+target_link_libraries(apriltags_eth PRIVATE ${PROJECT_NAME})
