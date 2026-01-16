@@ -75,8 +75,12 @@ jobs:
             CMAKE_PREFIX_PATH="$(brew --prefix opencv)"
             APPVEYOR_REPO_COMMIT=${{ github.sha }}
             APPVEYOR_REPO_TAG_NAME=${{ github.ref_type == 'tag' && github.ref_name || '' }}
-          # Windows-specific settings (OpenCV bundled via opencv-python in setup.py)
+          # Windows-specific settings
+          CIBW_BEFORE_ALL_WINDOWS: |
+            choco install opencv -y
+            $env:PATH += ";C:\tools\opencv\build\x64\vc16\bin"
           CIBW_ENVIRONMENT_WINDOWS: >
+            OpenCV_DIR="C:/tools/opencv/build"
             APPVEYOR_REPO_COMMIT=${{ github.sha }}
             APPVEYOR_REPO_TAG_NAME=${{ github.ref_type == 'tag' && github.ref_name || '' }}
 
