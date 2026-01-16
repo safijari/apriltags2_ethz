@@ -1,0 +1,94 @@
+name: Build Wheels
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }} - ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          # Linux x86_64
+          - os: ubuntu-latest
+            arch: x86_64
+          # Linux arm64
+          - os: ubuntu-latest
+            arch: aarch64
+          # macOS x86_64
+          - os: macos-13
+            arch: x86_64
+          # macOS arm64
+          - os: macos-14
+            arch: arm64
+          # Windows x86_64
+          - os: windows-latest
+            arch: AMD64
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # Set up QEMU for cross-compilation (needed for arm64 on x86_64 runners)
+      - name: Set up QEMU
+        if: runner.os == 'Linux' && matrix.arch == 'aarch64'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.16.5
+        env:
+          CIBW_BUILD: cp38-* cp39-* cp310-* cp311-* cp312-*
+          CIBW_SKIP: "*-musllinux_*"
+          CIBW_ARCHS: ${{ matrix.arch }}
+          # Linux-specific settings
+          CIBW_BEFORE_ALL_LINUX: |
+            yum install -y opencv-devel || apt-get update && apt-get install -y libopencv-dev
+          CIBW_ENVIRONMENT_LINUX: CMAKE_PREFIX_PATH=/usr
+          # macOS-specific settings
+          CIBW_BEFORE_ALL_MACOS: |
+            brew install opencv
+          CIBW_ENVIRONMENT_MACOS: CMAKE_PREFIX_PATH=/opt/homebrew
+          # Windows-specific settings
+          CIBW_BEFORE_BUILD_WINDOWS: |
+            pip install opencv-python
+          # Pass version info from git tags
+          CIBW_ENVIRONMENT: >
+            APPVEYOR_REPO_COMMIT=${{ github.sha }}
+            APPVEYOR_REPO_TAG_NAME=${{ github.ref_type == 'tag' && github.ref_name || '' }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}-${{ matrix.arch }}
+          path: ./wheelhouse/*.whl
+
+  upload_pypi:
+    name: Upload to PyPI
+    needs: [build_wheels]
+    runs-on: ubuntu-latest
+    # Only upload on tagged releases
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*
+          path: dist
+          merge-multiple: true
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
