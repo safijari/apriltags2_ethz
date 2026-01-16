@@ -54,15 +54,18 @@ jobs:
           CIBW_ARCHS: ${{ matrix.arch }}
           # Linux-specific settings
           CIBW_BEFORE_ALL_LINUX: |
-            yum install -y opencv-devel || apt-get update && apt-get install -y libopencv-dev
+            if command -v yum > /dev/null; then
+              yum install -y opencv-devel
+            elif command -v apt-get > /dev/null; then
+              apt-get update && apt-get install -y libopencv-dev
+            fi
           CIBW_ENVIRONMENT_LINUX: CMAKE_PREFIX_PATH=/usr
           # macOS-specific settings
           CIBW_BEFORE_ALL_MACOS: |
             brew install opencv
-          CIBW_ENVIRONMENT_MACOS: CMAKE_PREFIX_PATH=/opt/homebrew
-          # Windows-specific settings
-          CIBW_BEFORE_BUILD_WINDOWS: |
-            pip install opencv-python
+          CIBW_ENVIRONMENT_MACOS: >
+            CMAKE_PREFIX_PATH=$(brew --prefix opencv)
+          # Windows-specific settings (OpenCV bundled via opencv-python in setup.py)
           # Pass version info from git tags
           CIBW_ENVIRONMENT: >
             APPVEYOR_REPO_COMMIT=${{ github.sha }}
