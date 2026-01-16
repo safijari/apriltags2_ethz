@@ -59,15 +59,19 @@ jobs:
             elif command -v apt-get > /dev/null; then
               apt-get update && apt-get install -y libopencv-dev
             fi
-          CIBW_ENVIRONMENT_LINUX: CMAKE_PREFIX_PATH=/usr
+          CIBW_ENVIRONMENT_LINUX: >
+            CMAKE_PREFIX_PATH=/usr
+            APPVEYOR_REPO_COMMIT=${{ github.sha }}
+            APPVEYOR_REPO_TAG_NAME=${{ github.ref_type == 'tag' && github.ref_name || '' }}
           # macOS-specific settings
           CIBW_BEFORE_ALL_MACOS: |
             brew install opencv
-          CIBW_BEFORE_BUILD_MACOS: |
-            export CMAKE_PREFIX_PATH=$(brew --prefix opencv)
+          CIBW_ENVIRONMENT_MACOS: >
+            CMAKE_PREFIX_PATH="$(brew --prefix opencv)"
+            APPVEYOR_REPO_COMMIT=${{ github.sha }}
+            APPVEYOR_REPO_TAG_NAME=${{ github.ref_type == 'tag' && github.ref_name || '' }}
           # Windows-specific settings (OpenCV bundled via opencv-python in setup.py)
-          # Pass version info from git tags
-          CIBW_ENVIRONMENT: >
+          CIBW_ENVIRONMENT_WINDOWS: >
             APPVEYOR_REPO_COMMIT=${{ github.sha }}
             APPVEYOR_REPO_TAG_NAME=${{ github.ref_type == 'tag' && github.ref_name || '' }}
 
