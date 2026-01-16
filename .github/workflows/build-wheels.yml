@@ -77,10 +77,10 @@ jobs:
             APPVEYOR_REPO_TAG_NAME=${{ github.ref_type == 'tag' && github.ref_name || '' }}
           # Windows-specific settings
           CIBW_BEFORE_ALL_WINDOWS: |
-            choco install opencv -y
-            $env:PATH += ";C:\tools\opencv\build\x64\vc16\bin"
+            vcpkg install opencv:x64-windows eigen3:x64-windows
+            vcpkg integrate install
           CIBW_ENVIRONMENT_WINDOWS: >
-            OpenCV_DIR="C:/tools/opencv/build"
+            CMAKE_TOOLCHAIN_FILE="C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
             APPVEYOR_REPO_COMMIT=${{ github.sha }}
             APPVEYOR_REPO_TAG_NAME=${{ github.ref_type == 'tag' && github.ref_name || '' }}
 
