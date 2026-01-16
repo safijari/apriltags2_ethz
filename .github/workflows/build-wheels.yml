@@ -63,8 +63,8 @@ jobs:
           # macOS-specific settings
           CIBW_BEFORE_ALL_MACOS: |
             brew install opencv
-          CIBW_ENVIRONMENT_MACOS: >
-            CMAKE_PREFIX_PATH=$(brew --prefix opencv)
+          CIBW_BEFORE_BUILD_MACOS: |
+            export CMAKE_PREFIX_PATH=$(brew --prefix opencv)
           # Windows-specific settings (OpenCV bundled via opencv-python in setup.py)
           # Pass version info from git tags
           CIBW_ENVIRONMENT: >
@@ -73,7 +73,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}-${{ matrix.arch }}
+          name: wheels-${{ runner.os }}-${{ matrix.arch }}
           path: ./wheelhouse/*.whl
 
   upload_pypi:
