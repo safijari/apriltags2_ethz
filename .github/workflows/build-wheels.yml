@@ -58,11 +58,11 @@ jobs:
           # Linux-specific settings
           CIBW_BEFORE_ALL_LINUX: |
             if command -v dnf > /dev/null; then
-              dnf install -y opencv-devel
+              dnf install -y opencv-devel eigen3-devel
             elif command -v yum > /dev/null; then
-              yum install -y opencv-devel
+              yum install -y opencv-devel eigen3-devel
             elif command -v apt-get > /dev/null; then
-              apt-get update && apt-get install -y libopencv-dev
+              apt-get update && apt-get install -y libopencv-dev libeigen3-dev
             fi
           CIBW_ENVIRONMENT_LINUX: >
             CMAKE_PREFIX_PATH=/usr
@@ -70,7 +70,7 @@ jobs:
             APPVEYOR_REPO_TAG_NAME=${{ github.ref_type == 'tag' && github.ref_name || '' }}
           # macOS-specific settings
           CIBW_BEFORE_ALL_MACOS: |
-            brew install opencv
+            brew install opencv eigen
           CIBW_ENVIRONMENT_MACOS: >
             CMAKE_PREFIX_PATH="$(brew --prefix opencv)"
             APPVEYOR_REPO_COMMIT=${{ github.sha }}
